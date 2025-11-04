@@ -23,4 +23,5 @@ def get_logger(name: str):
         logger.addHandler(file_handler)
         logger.addHandler(stream_handler)
 
+    logger.propagate = False
     return logger
