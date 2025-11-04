@@ -1,0 +1,11 @@
+venv/
+_pycache_/
+*.pyc
+.env
+logs/
+*.log
+data/
+json scrap/
+.DS_Store
+Thumbs.db
+
