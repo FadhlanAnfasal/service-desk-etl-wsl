@@ -23,20 +23,29 @@ CREATE TABLE IF NOT EXISTS dw.etl_run_log (
 
 CREATE TABLE IF NOT EXISTS dw.dim_sentiment (
     sentiment_id SERIAL PRIMARY KEY,
-    sentiment_name TEXT UNIQUE,     
-    sentiment_label TEXT,           
-    sentiment_color TEXT,           
+    sentiment_name TEXT UNIQUE,
+    sentiment_label TEXT,
+    sentiment_color TEXT,
     created_at TIMESTAMPTZ DEFAULT now()
 );
 
 CREATE TABLE IF NOT EXISTS dw.dim_rating (
     rating_id SERIAL PRIMARY KEY,
-    rating_value INT UNIQUE,        
-    rating_label TEXT,              
-    satisfaction_level TEXT,        
+    rating_value INT UNIQUE,
+    rating_label TEXT,
+    satisfaction_level TEXT,
     created_at TIMESTAMPTZ DEFAULT now()
 );
 
 ALTER TABLE IF EXISTS dw.fact_reviews
 ADD COLUMN IF NOT EXISTS sentiment_id INT REFERENCES dw.dim_sentiment(sentiment_id),
 ADD COLUMN IF NOT EXISTS rating_id INT REFERENCES dw.dim_rating(rating_id);
+
+ALTER TABLE dw.fact_reviews
+ADD COLUMN day_name TEXT,
+ADD COLUMN day_number INT;
+
+UPDATE dw.fact_reviews
+SET
+    day_name = TRIM(TO_CHAR(date, 'Day')),
+    day_number = EXTRACT(ISODOW FROM date);

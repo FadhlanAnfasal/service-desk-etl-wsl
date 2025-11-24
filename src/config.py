@@ -1,6 +1,7 @@
 import os
-from dotenv import load_dotenv
 from pathlib import Path
+
+from dotenv import load_dotenv
 
 # Cari .env berdasarkan lokasi file ini (bukan current working dir)
 env_path = Path(__file__).resolve().parent.parent / ".env"
@@ -15,13 +16,15 @@ else:
 DB_URL = (
     f"postgresql+psycopg2://{os.getenv('DB_USER', 'etl_user')}:"
     f"{os.getenv('DB_PASS', 'etl_pass')}@"
-    f"{os.getenv('DB_HOST', 'localhost')}:"
+    f"{os.getenv('DB_HOST', 'db')}:"
     f"{os.getenv('DB_PORT', '5432')}/"
     f"{os.getenv('DB_NAME', 'servicedesk_dw')}"
 )
 
 # API Config
-SOURCE_API_BASE = os.getenv("SOURCE_API_BASE", "https://mrtj-api-production.up.railway.app")
+SOURCE_API_BASE = os.getenv(
+    "SOURCE_API_BASE", "https://mrtj-api-production.up.railway.app"
+)
 SOURCE_API_ENDPOINT = os.getenv("SOURCE_API_ENDPOINT", "/")
 BATCH_SIZE = int(os.getenv("BATCH_SIZE", "500"))
 

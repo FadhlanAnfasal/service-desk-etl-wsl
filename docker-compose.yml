@@ -8,11 +8,19 @@ services:
       POSTGRES_DB: servicedesk_dw
     ports:
       - "5432:5432"
+    networks:
+      - servicedesk_network
     volumes:
       - pgdata:/var/lib/postgresql/data
   adminer:
     image: adminer
     ports:
       - "8080:8080"
+    networks:
+      - servicedesk_network
 volumes:
   pgdata:
+
+networks:
+  servicedesk_network:
+    external: true

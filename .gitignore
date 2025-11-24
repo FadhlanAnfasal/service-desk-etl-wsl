@@ -8,4 +8,19 @@ data/
 json scrap/
 .DS_Store
 Thumbs.db
-
+airflow.cfg
+webserver_config.py
+airflow-webserver.pid
+logs/
+airflow/
+*.pid
+*.log
+*.dat
+*.cfg
+notebook/
+__pycache__/
+dags/__pycache__/
+*.pyc
+*.DS_Store
+*.swp
+.gitignore~

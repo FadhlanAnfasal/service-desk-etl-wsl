@@ -1,13 +1,16 @@
-from .extract import fetch_source_data
-from .transform import transform_to_clean_data
-from .dq import dq_checks
-from .load import upsert_frame
-from .logger import get_logger
-from sqlalchemy import create_engine, text
-from datetime import datetime
-from dotenv import load_dotenv
+# flake8: noqa: E501
 import os
 import traceback
+from datetime import datetime
+
+from dotenv import load_dotenv
+from sqlalchemy import create_engine, text
+
+from .dq import dq_checks
+from .extract import fetch_source_data
+from .load import upsert_frame
+from .logger import get_logger
+from .transform import transform_to_clean_data
 
 log = get_logger(__name__)
 load_dotenv()
@@ -24,11 +27,12 @@ def run(tag=None):
     DB_USER = os.getenv("DB_USER", "etl_user")
     DB_PASS = os.getenv("DB_PASS", "etl_pass")
     DB_NAME = os.getenv("DB_NAME", "servicedesk_dw")
-    DB_HOST = os.getenv("DB_HOST", "localhost")
+    DB_HOST = os.getenv("DB_HOST", "db")
     DB_PORT = os.getenv("DB_PORT", "5432")
 
     engine = create_engine(
-        f"postgresql+psycopg2://{DB_USER}:{DB_PASS}@{DB_HOST}:{DB_PORT}/{DB_NAME}?options=-csearch_path=dw"
+        f"postgresql+psycopg2://{DB_USER}:{DB_PASS}@{DB_HOST}:{DB_PORT}/{DB_NAME}"
+        "?options=-csearch_path=dw"
     )
 
     try:
@@ -41,7 +45,7 @@ def run(tag=None):
         log.info(f"Transformed {len(df_reviews)} cleaned review records")
 
         # === 3. Data Quality Checks (optional) ===
-        dq_issues = dq_checks({"fact_reviews":df_reviews})
+        dq_issues = dq_checks({"fact_reviews": df_reviews})
         dq_issues_str = ", ".join(dq_issues) if dq_issues else "None"
         log.info(f"DQ Checks: {dq_issues_str}")
 
@@ -58,15 +62,20 @@ def run(tag=None):
     finally:
         with engine.begin() as conn:
             conn.execute(text("SET search_path TO dw;"))
-            conn.execute(text("""
+            conn.execute(
+                text(
+                    """
                 INSERT INTO etl_run_log (started_at, finished_at, rows_loaded, dq_issues, status)
                 VALUES (:start, now(), :rows, :issues, :status)
-            """), {
-                "start": start_time,
-                "rows": rows_loaded,
-                "issues": dq_issues_str,
-                "status": status
-            })
+            """
+                ),
+                {
+                    "start": start_time,
+                    "rows": rows_loaded,
+                    "issues": dq_issues_str,
+                    "status": status,
+                },
+            )
         log.info(f"ETL run complete with status={status}")
 
 

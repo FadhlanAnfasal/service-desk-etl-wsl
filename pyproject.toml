@@ -1,0 +1,19 @@
+
+[tool.black]
+line-length = 79
+target-version = ["py310"]
+skip-string-normalization = false
+
+[tool.isort]
+profile = "black"
+line_length = 79
+combine_as_imports = true
+include_trailing_comma = true
+multi_line_output = 3
+
+[tool.flake8]
+max-line-length = 79
+extend-ignore = [
+    "E203", # Conflicts with black
+    "W503"  # Conflicts with black
+]
