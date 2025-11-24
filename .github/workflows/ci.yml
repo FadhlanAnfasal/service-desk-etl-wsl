@@ -1,0 +1,33 @@
+name: CI
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v3
+
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.10'
+
+      - name: Install pip dependencies
+        run: |
+          pip install -r requirements.txt
+          pip install pre-commit
+
+      - name: Run pre-commit (black, flake8, isort, etc.)
+        run: |
+          pre-commit run --all-files
+
+      - name: Run pytest
+        run: |
+          pytest -q
