@@ -1,16 +1,5 @@
-# flake8: noqa
 import os
 import sys
-
-sys.path.append("/opt/airflow")
-sys.path.append("/opt/airflow/src")
-sys.path.append(
-    os.path.join(
-        os.path.dirname(__file__),
-        "..",
-    )
-)  # noqa: E501
-
 from datetime import datetime, timedelta
 
 import requests
@@ -20,6 +9,14 @@ from airflow.utils.email import send_email
 from pendulum import timezone
 
 from src.main import run as etl_run
+
+sys.path.append(
+    os.path.join(
+        os.path.dirname(__file__),
+        "..",
+    )  # noqa: E501
+)
+sys.path.append("/opt/airflow")
 
 local_tz = timezone("Asia/Jakarta")
 
@@ -40,7 +37,20 @@ def notify_failure(context):
         to=["fadhlananfasalhajji1403@mail.ugm.ac.id"],
         subject=subject,
         html_content=body,
-    )  # noqa: E501
+    ) black....................................................................Failed
+- hook id: black
+- files were modified by this hook
+
+reformatted dags/service_desk_etl_dag.py
+
+All done! ✨ 🍰 ✨
+1 file reformatted, 9 files left unchanged.
+
+flake8...................................................................Failed
+- hook id: flake8
+- exit code: 1
+
+dags/service_desk_etl_dag.py:34:80: E501 line too long (83 > 79 characters)
 
 
 default_args = {
@@ -74,7 +84,7 @@ def send_teams_notification():
 
     payload = {
         "text": (
-            "✅ ETL pipeline successfull at "
+            "✅ ETL pipeline successfull at"
             f"{datetime.now(local_tz).strftime('%Y-%m-%d %H:%M:%S')} 💪"
         )
     }

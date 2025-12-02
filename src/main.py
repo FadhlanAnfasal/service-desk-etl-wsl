@@ -18,7 +18,7 @@ load_dotenv()
 
 def run(tag=None):
     start_time = datetime.now()
-    log.info(f"===== Starting ETL Run ({tag}) =====")
+    log.info(f"===== Starting ETL Run =====")
     dq_issues_str = ""
     rows_loaded = 0
     status = "SUCCESS"
@@ -44,12 +44,23 @@ def run(tag=None):
         df_reviews = transform_to_clean_data(raw)
         log.info(f"Transformed {len(df_reviews)} cleaned review records")
 
-        # === 3. Data Quality Checks (optional) ===
+        # === 3. Threshold Alert ===
+        MIN_ROWS = 500
+        MAX_ROWS = 2000
+        row_count = len(df_reviews)
+
+        if not (MIN_ROWS <= row_count <= MAX_ROWS):
+            log.warning(
+                f"⚠️ Threshold Alert: Row count abnormal! Got {row_count}, "
+                f"expected between {MIN_ROWS} and {MAX_ROWS}"
+            )
+
+        # === 4. Data Quality Checks (optional) ===
         dq_issues = dq_checks({"fact_reviews": df_reviews})
         dq_issues_str = ", ".join(dq_issues) if dq_issues else "None"
         log.info(f"DQ Checks: {dq_issues_str}")
 
-        # === 4. Load to PostgreSQL ===
+        # === 5. Load to PostgreSQL ===
         upsert_frame(df_reviews, "fact_reviews", ["review_id"])
         rows_loaded = len(df_reviews)
         log.info(f"✅ Loaded {rows_loaded} reviews into dw.fact_reviews")
