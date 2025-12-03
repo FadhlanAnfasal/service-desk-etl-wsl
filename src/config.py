@@ -22,7 +22,7 @@ DB_URL = (
 )
 
 # API Config
-SOURCE_API_BASE = os.getenv("SOURCE_API_BASE", "http://10.1.26.22:3000/")
+SOURCE_API_BASE = os.getenv("SOURCE_API_BASE", "http://10.1.26.11:3000/")
 SOURCE_API_ENDPOINT = os.getenv("SOURCE_API_ENDPOINT", "")
 BATCH_SIZE = int(os.getenv("BATCH_SIZE", "500"))
 
