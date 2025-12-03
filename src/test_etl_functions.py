@@ -8,11 +8,24 @@ from src.transform import transform_to_clean_data
 from .extract import fetch_source_data
 
 
-def test_fetch_source_data():
+@patch("src.extract.requests.get")
+def test_fetch_source_data(mock_get):
+    # Fake API Response
+    mock_get.return_value.json.return_value = [
+        {
+            "Review Id": "1",
+            "Username": "alice",
+            "Rating": "5",
+            "Review Text": "Nice",
+            "Date": "2024-01-01",
+        }
+    ]
+    mock_get.return_value.status_code = 200
+
     data = fetch_source_data()
-    assert data is not None
     assert isinstance(data, list)
-    assert len(data) > 0
+    assert len(data) == 1
+    assert data[0]["Username"] == "alice"
 
 
 def test_transform_to_clean_data():
